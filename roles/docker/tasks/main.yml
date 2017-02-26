@@ -1,0 +1,19 @@
+---
+# tasks file for docker
+
+- name: Add the Google signing key
+  apt_key: url=https://packages.cloud.google.com/apt/doc/apt-key.gpg state=present
+
+- name: Add the k8s APT repo
+  apt_repository: repo='deb http://apt.kubernetes.io/ kubernetes-xenial main' state=present
+
+- name: Install packages
+  apt: name={{ item }} state=installed update_cache=true force=yes
+  with_items: "{{ packages }}"
+
+- name: disable app armore
+  command: /etc/init.d/apparmor stop
+
+- name: install jq
+  apt: name=jq state=installed update_cache=true force=yes
+  when: inventory_hostname == "master"
